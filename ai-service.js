@@ -1,3 +1,5 @@
+// This file contains the generateCommands function that uses the Hugging Face Inference API to generate git bash commands based on a task description. Currently using the DeepSeek-V3-0324 model.
+
 import { InferenceClient } from '@huggingface/inference';
 import dotenv from 'dotenv';
 dotenv.config();

@@ -1,4 +1,4 @@
-// agent.js
+// This file contains the main functioning of the agent that uses the generateCommands function to create and execute git bash commands based on user input. It uses inquirer for user interaction and child_process for command execution.
 import generateCommands from './ai-service.js';
 import inquirer from 'inquirer';
 import { exec } from 'child_process';
