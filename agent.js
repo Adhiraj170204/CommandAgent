@@ -23,8 +23,6 @@ async function runAgent() {
         console.log('Failed to generate valid commands. Please check your input or try again.');
         return;
     }
-
-    console.log('CommandsBefore:', commands);
     if (typeof commands === 'string') {
         const match = commands.match(/\[\s*{[\s\S]*}\s*\]/);
         if (match) {
