@@ -3,6 +3,7 @@ import generateCommands from './ai-service.js';
 import inquirer from 'inquirer';
 import { exec } from 'child_process';
 import fs from 'fs';
+import path from 'path';
 
 const { prompt } = inquirer;
 
