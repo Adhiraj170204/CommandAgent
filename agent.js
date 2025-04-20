@@ -49,7 +49,6 @@ async function runAgent() {
         return;
     }
     console.log('\nHere is my execution plan:');
-    console.log('CommandsAfter:', commands);
     commands.map((cmd, index) => { console.log(`${index + 1}. ${cmd.description}`) })
 
     const { approved } = await prompt([
