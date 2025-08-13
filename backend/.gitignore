@@ -1,7 +1,5 @@
 # Dependencies
 node_modules/
-.kiro/
-.vscode/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

@@ -6,13 +6,19 @@
   "scripts": {
     "start": "node agent.js",
     "dev": "node agent.js",
-    "test": "node test-cases.js",
+    "cli": "node cli.js",
+    "test": "node tests/agent.test.js",
+    "test:integration": "node test-cases.js",
     "test:java": "node java-test.js"
+  },
+  "bin": {
+    "command-agent": "./cli.js"
   },
   "keywords": ["ai", "automation", "cli", "agent", "project-setup", "code-generation"],
   "author": "Your Name",
   "license": "MIT",
   "dependencies": {
+    "commander": "^12.0.0",
     "dotenv": "^16.5.0",
     "inquirer": "^12.5.2"
   },
@@ -20,8 +26,12 @@
   "description": "AI-powered automation agent for project setup and command generation using natural language",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/command-agent.git"
+    "url": "git+https://github.com/yourusername/command-agent.git"
   },
+  "bugs": {
+    "url": "https://github.com/yourusername/command-agent/issues"
+  },
+  "homepage": "https://github.com/yourusername/command-agent#readme",
   "engines": {
     "node": ">=16.0.0"
   }

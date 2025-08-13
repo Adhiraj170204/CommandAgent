@@ -1,140 +1,232 @@
-# Node.js Project Automation Agent
+# 🤖 Command Agent
 
-This project is an **AI-powered automation agent** for Node.js project setup and management. It uses an AI model to convert natural language tasks into executable shell commands, then runs those commands to automate project scaffolding, dependency installation, file creation, and more.
+**AI-Powered Project Automation Agent**
 
----
+Transform natural language descriptions into executable commands for project setup, development workflows, and automation tasks.
 
-## Features
-
-- **Natural Language to Commands:**  
-  Enter a plain English task (e.g., “Set up a new Node.js project with Express and Mongoose, add a /status route, and initialize git”), and the agent generates the necessary shell commands.
-
-- **AI-Driven Command Generation:**  
-  Uses an AI model to generate a sequence of commands as a JSON array, each with a description.
-
-- **Safe File Creation:**  
-  For file creation, the agent uses Node.js’s `fs` module via `node -e` commands, never `echo`, to avoid shell quoting issues and ensure cross-platform compatibility.
-
-- **Interactive Execution:**  
-  Prompts the user for approval before executing each command.
-
-- **Directory Management:**  
-  Handles `mkdir` and `cd` logic to ensure commands execute in the correct directory context.
-
-- **Error Handling:**  
-  Gracefully handles invalid or incomplete AI responses and command execution errors.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)](https://nodejs.org/)
 
 ---
 
-## How It Works
+## ✨ Features
 
-1. **User Input:**  
-   The agent prompts you for a task description.
-
-2. **AI Command Generation:**  
-   The description is sent to an AI model, which returns a JSON array of commands and descriptions.
-
-3. **Command Parsing:**  
-   The agent parses the JSON, validates the commands, and displays an execution plan.
-
-4. **Interactive Execution:**  
-   For each command, the agent asks for your approval before running it.  
-   Special handling is included for directory changes (`mkdir ... && cd ...`).
-
-5. **Execution & Feedback:**  
-   Commands are executed sequentially. Output and errors are displayed after each command.
+- 🧠 **AI-Powered Command Generation** - Uses Perplexity Sonar API to convert natural language to executable commands
+- 🛡️ **Safe Execution** - Interactive approval process with command validation and dangerous command detection
+- 📁 **Smart Directory Management** - Automatic directory tracking and context switching
+- 🎯 **Multi-Language Support** - Supports Node.js, Python, Java, HTML/CSS/JS, Docker, and more
+- ⚡ **MERN Stack Specialist** - Optimized for full-stack JavaScript development
+- 🔧 **Flexible Interface** - Both interactive CLI and programmatic API
+- 📝 **Comprehensive Logging** - Detailed execution logs and error reporting
 
 ---
 
-## Example Usage
+## 🚀 Quick Start
 
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/command-agent.git
+cd command-agent
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add your Perplexity API key
 ```
-$ node agent.js
-✔ What task would you like me to perform? Set up a new Node.js project in a new folder named test1 with Express and Mongoose, initialize a Git repository, create a .gitignore file to ignore node_modules and .env, create a README.md, set up a MongoDB connection, add a /status route, create a .env file, install nodemon as a dev dependency, and make an initial commit.
-Generating execution plan...
-1. Create a new folder named test1 and navigate into it.
-2. Initialize a new Node.js project with default settings.
-3. Install Express and Mongoose as project dependencies.
-4. Initialize a new Git repository in the current directory.
-5. Create a .gitignore file to ignore node_modules and .env.
-6. Create a README.md file with the project title and description.
-7. Create app.js with Express setup, MongoDB connection, and a /status route.
-8. Create a .env file with PORT=3000.
-9. Install nodemon as a dev dependency.
-10. Make an initial commit.
-...
+
+### Basic Usage
+
+```bash
+# Interactive mode
+npm start
+
+# CLI mode
+npm run cli generate "Create a React app with TypeScript"
+
+# Run tests
+npm test
 ```
 
 ---
 
-## .gitignore Example
+## 📖 Usage Examples
+
+### MERN Stack Setup
+```
+What task would you like me to perform? 
+> Create a MERN stack project with authentication
+
+✅ Generated 8 commands:
+1. Create project folder
+2. Initialize Node.js project
+3. Install Express and Mongoose
+4. Create Express server with auth routes
+5. Set up client folder
+6. Create React app with login components
+7. Configure proxy for development
+8. Add authentication middleware
+```
+
+### Java Project Setup
+```
+What task would you like me to perform?
+> Create a Java project with JUnit testing
+
+✅ Generated 6 commands:
+1. Create JavaProject folder
+2. Set up src and test directories
+3. Create Main.java with hello world
+4. Create JUnit test file
+5. Set up Gradle build configuration
+6. Add JUnit dependencies
+```
+
+### Python Flask App
+```
+What task would you like me to perform?
+> Create a Python Flask web application
+
+✅ Generated 5 commands:
+1. Create Flask project folder
+2. Set up Python virtual environment
+3. Install Flask dependencies
+4. Create basic Flask app with routes
+5. Add requirements.txt
+```
+
+---
+
+## 🎯 Best Prompts for Different Technologies
+
+### ✅ **Recommended Prompts**
+
+**Node.js/JavaScript:**
+- "Create a MERN stack project with authentication"
+- "Set up Express API with MongoDB connection"
+- "Create a React app with routing and state management"
+
+**Java:**
+- "Create a Java project with JUnit testing"
+- "Set up a basic Java console application"
+- "Create Java project with Gradle build"
+
+**Python:**
+- "Create a Python Flask web application"
+- "Set up Python project with virtual environment"
+- "Create Django project with basic models"
+
+**Web Development:**
+- "Create a responsive website with HTML, CSS, and JavaScript"
+- "Set up a static site with modern CSS framework"
+- "Create a portfolio website with contact form"
+
+### ⚠️ **Avoid Complex Frameworks Initially**
+- Spring Boot (too complex for initial setup)
+- Complex Maven configurations
+- Multi-module projects
+
+---
+
+## 🛠️ Configuration
+
+### Environment Variables
+
+```bash
+# Required
+API_SecretKey=your_perplexity_api_key_here
+
+# Optional
+DEFAULT_TIMEOUT=30000
+REACT_APP_TIMEOUT=300000
+DEBUG=false
+```
+
+### API Configuration
+
+The agent uses Perplexity Sonar API. Get your API key from [Perplexity AI](https://www.perplexity.ai/).
+
+---
+
+## 📁 Project Structure
 
 ```
-node_modules
-.env
-.DS_Store
-npm-debug.log
-dist
+command-agent/
+├── agent.js              # Main interactive agent
+├── ai-service.js          # AI API integration
+├── cli.js                 # Command-line interface
+├── config/
+│   └── config.js          # Configuration management
+├── utils/
+│   ├── logger.js          # Logging utilities
+│   └── validation.js      # Input validation
+├── tests/
+│   └── agent.test.js      # Test suite
+├── .env.example           # Environment template
+└── README.md              # This file
 ```
 
 ---
 
-## How to Push to GitHub
+## 🧪 Testing
 
-1. Initialize git (if not already):
-   ```
-   git init
-   ```
-2. Add all files:
-   ```
-   git add .
-   ```
-3. Commit:
-   ```
-   git commit -m "Initial commit"
-   ```
-4. Create a new repo on GitHub and add it as remote:
-   ```
-   git remote add origin https://github.com/<your-username>/<repo-name>.git
-   ```
-5. Push:
-   ```
-   git push -u origin master
-   ```
+```bash
+# Run all tests
+npm test
+
+# Run integration tests
+npm run test:integration
+
+# Run Java-specific tests
+npm run test:java
+```
 
 ---
 
-## Security Note
+## 🔒 Security Features
 
-- **Review all generated commands before execution.**  
-  The agent executes shell commands generated by an AI model. Always check for safety and correctness.
-
----
-
-## Requirements
-
-- Node.js v16 or higher
-- npm
-- Access to an AI API (e.g., DeepSeek, OpenAI, etc.)
-- [Optional] MongoDB for database-related tasks
+- **Input Validation** - Sanitizes and validates all user inputs
+- **Dangerous Command Detection** - Blocks potentially harmful commands
+- **Safe File Operations** - Uses Node.js fs module instead of shell commands
+- **Interactive Approval** - User must approve each command before execution
 
 ---
 
-## Project Structure
+## 🤝 Contributing
 
-- `agent.js` — Main agent logic, user interaction, and command execution.
-- `ai-service.js` — Handles communication with the AI model.
-- `index.js` — Example/test runner and utility functions.
-- `.gitignore` — Standard Node.js ignores.
-
----
-
-## License
-
-MIT
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
-## Contributing
+## 📝 License
 
-Pull requests and suggestions are welcome!
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- [Perplexity AI](https://www.perplexity.ai/) for the powerful Sonar API
+- [Inquirer.js](https://github.com/SBoudrias/Inquirer.js) for interactive CLI
+- [Commander.js](https://github.com/tj/commander.js) for command-line interface
+
+---
+
+## 📞 Support
+
+If you encounter any issues or have questions:
+
+1. Check the [Issues](https://github.com/yourusername/command-agent/issues) page
+2. Create a new issue with detailed information
+3. Join our [Discussions](https://github.com/yourusername/command-agent/discussions)
+
+---
+
+**Made with ❤️ for developers who love automation**
