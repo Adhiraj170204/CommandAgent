@@ -1,3 +1,59 @@
-node_modules
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
 .env
-index.js
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs/
+*.log
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Test files (temporary)
+test-cases.js
+java-test.js
+manual-test.js
+execute-test.js
+java-prompts-guide.md
+
+# Generated projects (for testing)
+test/
+simple-html/
+JavaProject/
+SimpleJavaApp/
+flaskapp/
+my-node-docker-project/
+springboot-api/
+spring-mvc-app/
+express-api/
+website/

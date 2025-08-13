@@ -1,9 +1,18 @@
-// This file contains the generateCommands function that uses the Perplexity Sonar API to generate git bash commands based on a task description.
+// This file contains the generateCommands function that uses the Perplexity Sonar API to generate Windows CMD commands based on a task description.
 
-import dotenv from 'dotenv';
-dotenv.config();
+import config from './config/config.js';
+import logger from './utils/logger.js';
 
 async function generateCommands(taskDescription) {
+  // Validate configuration
+  try {
+    config.validate();
+  } catch (error) {
+    logger.error('Configuration validation failed', { error: error.message });
+    throw error;
+  }
+
+  logger.info('Generating commands for task', { task: taskDescription });
   const userPrompt = `
 You are a helpful assistant that converts user tasks into executable commands for Windows CMD.
 
@@ -18,7 +27,13 @@ Instructions:
 - Do NOT include any explanations, markdown, or text outside the JSON array.
 - Only include commands that are necessary and safe to run in a Windows CMD environment.
 - IMPORTANT: When creating folders, use separate commands. First "mkdir foldername", then subsequent commands will run inside that folder automatically.
-- Do NOT use cd commands or chain commands with &. Each command should be separate.
+- NEVER use cd commands - directory changes are handled automatically after mkdir.
+- Do NOT chain commands with & or &&. Each command should be separate.
+- After mkdir command, all following commands will execute in that new directory.
+- For npm installs, always use --save or --save-dev to update package.json properly.
+- For MERN stack: install backend dependencies first, then create client folder, then setup React app.
+- Use proper file creation with formatted code, not minified code.
+- When creating React app, use "npx create-react-app ." to create in current directory after mkdir client.
 
 Task: ${taskDescription}
 
@@ -33,12 +48,24 @@ Example output format:
     "description": "Initialize a new Node.js project with default settings."
   },
   {
-    "command": "npm install express",
-    "description": "Install Express.js framework."
+    "command": "npm install --save express mongoose",
+    "description": "Install and save Express and Mongoose to package.json."
   },
   {
-    "command": "node -e \\"require('fs').writeFileSync('app.js', 'console.log(\\\\'Hello World!\\\\');')\\"",
-    "description": "Create an app.js file with Hello World code."
+    "command": "npm install --save-dev nodemon",
+    "description": "Install nodemon as development dependency."
+  },
+  {
+    "command": "node -e \\"require('fs').writeFileSync('server.js', 'const express = require(\\\\'express\\\\');\\\\nconst app = express();\\\\nconst PORT = 5000;\\\\napp.listen(PORT, () => console.log(\\\\'Server running on port \\\\' + PORT));')\\"",
+    "description": "Create a basic Express server file."
+  },
+  {
+    "command": "mkdir client",
+    "description": "Create client folder for React frontend."
+  },
+  {
+    "command": "npx create-react-app .",
+    "description": "Create React app in current directory (client folder)."
   }
 ]
 
@@ -47,35 +74,58 @@ Respond ONLY with the JSON array for the task: ${taskDescription}.
 
   try {
     const requestBody = {
-      model: 'sonar',
+      model: config.api.model,
       messages: [{ role: 'user', content: userPrompt }],
-      max_tokens: 512,
-      temperature: 0.6
+      max_tokens: config.api.maxTokens,
+      temperature: config.api.temperature
     };
 
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+    if (config.debug) {
+      logger.info('API Request', { requestBody });
+    }
+
+    const response = await fetch(config.api.endpoint, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${process.env.API_SecretKey}`,
+        'Authorization': `Bearer ${config.api.key}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      logger.error('API request failed', { 
+        status: response.status, 
+        statusText: response.statusText,
+        error: errorText 
+      });
+
       if (response.status === 401) {
-        throw new Error('Invalid Perplexity API key');
+        throw new Error('Invalid Perplexity API key - check your .env file');
       } else if (response.status === 429) {
-        throw new Error('API rate limit exceeded');
+        throw new Error('API rate limit exceeded - please wait before trying again');
+      } else if (response.status === 400) {
+        throw new Error(`Bad request: ${errorText}`);
       } else {
-        throw new Error(`API error: ${response.status}`);
+        throw new Error(`API error ${response.status}: ${errorText}`);
       }
     }
 
     const data = await response.json();
+    
+    if (config.debug) {
+      logger.info('API Response', { data });
+    }
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid API response structure');
+    }
+
+    logger.success('Commands generated successfully');
     return data.choices[0].message.content;
   } catch (error) {
-    console.error('❌ Error generating commands:', error);
+    logger.error('Error generating commands', { error: error.message, stack: error.stack });
     return null;
   }
 }

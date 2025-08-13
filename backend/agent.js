@@ -1,11 +1,19 @@
-// This file contains the main functioning of the agent that uses the generateCommands function to create and execute git bash commands based on user input. It uses inquirer for user interaction and child_process for command execution.
+// This file contains the main functioning of the agent that uses the generateCommands function to create and execute commands based on user input.
 import generateCommands from './ai-service.js';
+import config from './config/config.js';
+import logger from './utils/logger.js';
 import inquirer from 'inquirer';
 import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
 const { prompt } = inquirer;
+
+// Handle process exit gracefully
+process.on('SIGINT', () => {
+    console.log('\n🛑 Process interrupted by user. Exiting...');
+    process.exit(0);
+});
 
 async function runAgent() {
     const { task } = await prompt([
@@ -85,40 +93,47 @@ async function runAgent() {
                     }
                     // Update currentDir to the new folder for subsequent commands
                     currentDir = fullPath;
+                    console.log(`📁 Current directory updated to: ${currentDir}`);
                     console.log('✅ Command completed successfully\n');
                     continue;
                 }
             }
 
-            // Handle cd commands - update currentDir
-            if (cmd.command.includes('cd ')) {
-                const cdMatch = cmd.command.match(/cd\s+([^\s&]+)/);
-                if (cdMatch) {
-                    const targetDir = cdMatch[1];
-                    const newDir = path.resolve(currentDir, targetDir);
-                    if (fs.existsSync(newDir)) {
-                        currentDir = newDir;
-                        console.log(`Changed directory to: ${currentDir}`);
-                    }
-                }
+            // Skip cd commands since we handle directory changes automatically
+            if (cmd.command.startsWith('cd ')) {
+                console.log('⏭️ Skipping cd command - directory changes are handled automatically');
+                console.log('✅ Command completed successfully\n');
+                continue;
+            }
+
+            // Handle special React app creation with extended timeout
+            let commandTimeout = 30000; // Default 30 seconds
+            if (cmd.command.includes('create-react-app')) {
+                console.log('🚀 Creating React app - this may take a few minutes...');
+                commandTimeout = 300000; // 5 minutes for React app creation
             }
 
             try {
-                const { stdout, stderr } = await execPromise(cmd.command, currentDir);
+                const { stdout, stderr } = await execPromise(cmd.command, currentDir, commandTimeout);
                 console.log('Output:', stdout);
                 if (stderr) console.error('Error:', stderr);
                 console.log('✅ Command completed successfully\n');
             } catch (error) {
                 console.error('❌ Execution failed:', error.message);
-                const { continueExecution } = await prompt([
-                    {
-                        type: 'confirm',
-                        name: 'continueExecution',
-                        message: 'Do you want to continue executing the remaining commands?',
-                        default: false,
-                    },
-                ]);
-                if (!continueExecution) break;
+                try {
+                    const { continueExecution } = await prompt([
+                        {
+                            type: 'confirm',
+                            name: 'continueExecution',
+                            message: 'Do you want to continue executing the remaining commands?',
+                            default: false,
+                        },
+                    ]);
+                    if (!continueExecution) break;
+                } catch (promptError) {
+                    console.log('\n🛑 Process interrupted by user. Exiting...');
+                    process.exit(0);
+                }
             }
         }
     } else {
@@ -126,12 +141,12 @@ async function runAgent() {
     }
 }
 
-function execPromise(command, cwd) {
+function execPromise(command, cwd, timeout = 30000) {
     return new Promise((resolve, reject) => {
-        const child = exec(command, { 
+        const child = exec(command, {
             cwd,
-            timeout: 30000, // 30 second timeout
-            maxBuffer: 1024 * 1024 // 1MB buffer
+            timeout: timeout,
+            maxBuffer: 1024 * 1024 * 10 // 10MB buffer for large outputs
         }, (error, stdout, stderr) => {
             if (error) {
                 reject(error);
@@ -139,13 +154,13 @@ function execPromise(command, cwd) {
             }
             resolve({ stdout, stderr });
         });
-        
+
         // Handle timeout manually
         const timeoutId = setTimeout(() => {
             child.kill();
-            reject(new Error('Command timed out after 30 seconds'));
-        }, 30000);
-        
+            reject(new Error(`Command timed out after ${timeout / 1000} seconds`));
+        }, timeout);
+
         child.on('exit', () => {
             clearTimeout(timeoutId);
         });
