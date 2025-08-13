@@ -10,9 +10,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@huggingface/inference": "^3.8.1",
     "dotenv": "^16.5.0",
-    "inquirer": "^12.5.2"
+    "express": "^5.1.0",
+    "inquirer": "^12.5.2",
+    "mongoose": "^8.17.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-scripts": "^5.0.1"
   },
   "description": "A new Node.js project with Express and Mongoose."
 }

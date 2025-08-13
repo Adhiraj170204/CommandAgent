@@ -69,20 +69,37 @@ async function runAgent() {
                 console.log('No valid command to execute.');
                 continue;
             }
-            console.log(`Executing: ${cmd.command}`);
+            console.log(`Executing: ${cmd.command} (in ${currentDir})`);
 
-            if (cmd.command.startsWith('mkdir ') && cmd.command.includes('&& cd ')) {
-                const match = cmd.command.match(/mkdir\s+([^\s]+)\s+&&\s+cd\s+([^\s]+)/);
-                if (match) {
-                    const folder = match[2];
-                    if (!fs.existsSync(folder)) {
-                        fs.mkdirSync(folder);
-                        console.log(`Created directory: ${folder}`);
+            // Handle mkdir command - create directory and update currentDir
+            if (cmd.command.startsWith('mkdir ')) {
+                const folderMatch = cmd.command.match(/mkdir\s+([^\s&]+)/);
+                if (folderMatch) {
+                    const folder = folderMatch[1];
+                    const fullPath = path.join(currentDir, folder);
+                    if (!fs.existsSync(fullPath)) {
+                        fs.mkdirSync(fullPath, { recursive: true });
+                        console.log(`Created directory: ${fullPath}`);
                     } else {
-                        console.log(`Directory already exists: ${folder}`);
+                        console.log(`Directory already exists: ${fullPath}`);
                     }
-                    currentDir = require('path').join(currentDir, folder);
-                    continue; 
+                    // Update currentDir to the new folder for subsequent commands
+                    currentDir = fullPath;
+                    console.log('✅ Command completed successfully\n');
+                    continue;
+                }
+            }
+
+            // Handle cd commands - update currentDir
+            if (cmd.command.includes('cd ')) {
+                const cdMatch = cmd.command.match(/cd\s+([^\s&]+)/);
+                if (cdMatch) {
+                    const targetDir = cdMatch[1];
+                    const newDir = path.resolve(currentDir, targetDir);
+                    if (fs.existsSync(newDir)) {
+                        currentDir = newDir;
+                        console.log(`Changed directory to: ${currentDir}`);
+                    }
                 }
             }
 
@@ -90,8 +107,9 @@ async function runAgent() {
                 const { stdout, stderr } = await execPromise(cmd.command, currentDir);
                 console.log('Output:', stdout);
                 if (stderr) console.error('Error:', stderr);
+                console.log('✅ Command completed successfully\n');
             } catch (error) {
-                console.error('Execution failed:', error.message);
+                console.error('❌ Execution failed:', error.message);
                 const { continueExecution } = await prompt([
                     {
                         type: 'confirm',
@@ -110,12 +128,26 @@ async function runAgent() {
 
 function execPromise(command, cwd) {
     return new Promise((resolve, reject) => {
-        exec(command, { cwd }, (error, stdout, stderr) => {
+        const child = exec(command, { 
+            cwd,
+            timeout: 30000, // 30 second timeout
+            maxBuffer: 1024 * 1024 // 1MB buffer
+        }, (error, stdout, stderr) => {
             if (error) {
                 reject(error);
                 return;
             }
             resolve({ stdout, stderr });
+        });
+        
+        // Handle timeout manually
+        const timeoutId = setTimeout(() => {
+            child.kill();
+            reject(new Error('Command timed out after 30 seconds'));
+        }, 30000);
+        
+        child.on('exit', () => {
+            clearTimeout(timeoutId);
         });
     });
 }
