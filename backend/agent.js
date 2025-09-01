@@ -1,7 +1,6 @@
-// This file contains the main functioning of the agent that uses the generateCommands function to create and execute commands based on user input.
+
 import generateCommands from './ai-service.js';
-import config from './config/config.js';
-import logger from './utils/logger.js';
+
 import inquirer from 'inquirer';
 import { exec } from 'child_process';
 import fs from 'fs';
@@ -9,7 +8,7 @@ import path from 'path';
 
 const { prompt } = inquirer;
 
-// Handle process exit gracefully
+
 process.on('SIGINT', () => {
     console.log('\n🛑 Process interrupted by user. Exiting...');
     process.exit(0);
@@ -79,7 +78,7 @@ async function runAgent() {
             }
             console.log(`Executing: ${cmd.command} (in ${currentDir})`);
 
-            // Handle mkdir command - create directory and update currentDir
+
             if (cmd.command.startsWith('mkdir ')) {
                 const folderMatch = cmd.command.match(/mkdir\s+([^\s&]+)/);
                 if (folderMatch) {
@@ -91,7 +90,7 @@ async function runAgent() {
                     } else {
                         console.log(`Directory already exists: ${fullPath}`);
                     }
-                    // Update currentDir to the new folder for subsequent commands
+
                     currentDir = fullPath;
                     console.log(`📁 Current directory updated to: ${currentDir}`);
                     console.log('✅ Command completed successfully\n');
@@ -99,18 +98,18 @@ async function runAgent() {
                 }
             }
 
-            // Skip cd commands since we handle directory changes automatically
+
             if (cmd.command.startsWith('cd ')) {
                 console.log('⏭️ Skipping cd command - directory changes are handled automatically');
                 console.log('✅ Command completed successfully\n');
                 continue;
             }
 
-            // Handle special React app creation with extended timeout
-            let commandTimeout = 30000; // Default 30 seconds
+
+            let commandTimeout = 30000;
             if (cmd.command.includes('create-react-app')) {
                 console.log('🚀 Creating React app - this may take a few minutes...');
-                commandTimeout = 300000; // 5 minutes for React app creation
+                commandTimeout = 300000;
             }
 
             try {
@@ -155,7 +154,7 @@ function execPromise(command, cwd, timeout = 30000) {
             resolve({ stdout, stderr });
         });
 
-        // Handle timeout manually
+
         const timeoutId = setTimeout(() => {
             child.kill();
             reject(new Error(`Command timed out after ${timeout / 1000} seconds`));

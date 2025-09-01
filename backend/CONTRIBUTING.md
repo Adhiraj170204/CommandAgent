@@ -15,7 +15,7 @@ Thank you for your interest in contributing to Command Agent! This document prov
 
 1. **Fork and Clone**
    ```bash
-   git clone https://github.com/yourusername/command-agent.git
+   git clone https://github.com/command-agent/command-agent.git
    cd command-agent
    ```
 

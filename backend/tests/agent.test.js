@@ -1,4 +1,4 @@
-// Basic test suite for the agent functionality
+
 import { validateTaskDescription, validateCommand, ValidationError } from '../utils/validation.js';
 import generateCommands from '../ai-service.js';
 
@@ -57,7 +57,7 @@ class TestRunner {
 
 const runner = new TestRunner();
 
-// Validation Tests
+
 runner.test('validateTaskDescription - valid input', () => {
     const result = validateTaskDescription('Create a simple Node.js project');
     runner.assertEqual(result, 'Create a simple Node.js project');
@@ -93,14 +93,14 @@ runner.test('validateCommand - missing description', () => {
     );
 });
 
-// Integration Tests
+
 runner.test('generateCommands - simple task', async () => {
     const commands = await generateCommands('Create a simple HTML file');
     runner.assert(commands !== null, 'Should generate commands');
     runner.assert(typeof commands === 'string', 'Should return string');
 });
 
-// Run tests
+
 runner.run().then(success => {
     process.exit(success ? 0 : 1);
 });

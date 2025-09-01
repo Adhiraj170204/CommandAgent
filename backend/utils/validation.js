@@ -1,4 +1,4 @@
-// Input validation and sanitization utilities
+
 
 export class ValidationError extends Error {
     constructor(message) {
@@ -20,7 +20,7 @@ export function validateTaskDescription(task) {
         throw new ValidationError('Task description is too long (max 1000 characters)');
     }
 
-    // Check for potentially dangerous patterns
+
     const dangerousPatterns = [
         /rm\s+-rf/i,
         /del\s+\/[sq]/i,
@@ -52,14 +52,14 @@ export function validateCommand(command) {
         throw new ValidationError('Command must have a valid description');
     }
 
-    // Additional command validation
+
     const cmd = command.command.trim();
     
     if (cmd.length === 0) {
         throw new ValidationError('Command cannot be empty');
     }
 
-    // Block dangerous commands
+
     const dangerousCommands = [
         /^rm\s+-rf\s+\//,
         /^del\s+\/[sq]\s+\*/,
@@ -83,7 +83,7 @@ export function sanitizeFilePath(filePath) {
         throw new ValidationError('File path must be a string');
     }
 
-    // Remove dangerous path traversal attempts
+
     const sanitized = filePath
         .replace(/\.\.\//g, '')
         .replace(/\.\.\\/g, '')

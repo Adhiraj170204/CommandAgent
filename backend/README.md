@@ -27,7 +27,7 @@ Transform natural language descriptions into executable commands for project set
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/command-agent.git
+git clone https://github.com/command-agent/command-agent.git
 cd command-agent
 
 # Install dependencies
@@ -223,9 +223,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you encounter any issues or have questions:
 
-1. Check the [Issues](https://github.com/yourusername/command-agent/issues) page
+1. Check the [Issues](https://github.com/command-agent/command-agent/issues) page
 2. Create a new issue with detailed information
-3. Join our [Discussions](https://github.com/yourusername/command-agent/discussions)
+3. Join our [Discussions](https://github.com/command-agent/command-agent/discussions)
 
 ---
 

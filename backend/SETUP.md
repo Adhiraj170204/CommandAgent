@@ -26,7 +26,7 @@ git commit -m "Initial commit: AI-powered command agent"
 
 ```bash
 # Add GitHub remote
-git remote add origin https://github.com/YOUR_USERNAME/command-agent.git
+git remote add origin https://github.com/command-agent/command-agent.git
 
 # Push to GitHub
 git branch -M main

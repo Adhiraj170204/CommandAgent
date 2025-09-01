@@ -15,7 +15,7 @@
     "command-agent": "./cli.js"
   },
   "keywords": ["ai", "automation", "cli", "agent", "project-setup", "code-generation"],
-  "author": "Your Name",
+  "author": "Command Agent Team",
   "license": "MIT",
   "dependencies": {
     "commander": "^12.0.0",
@@ -26,12 +26,12 @@
   "description": "AI-powered automation agent for project setup and command generation using natural language",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/command-agent.git"
+    "url": "git+https://github.com/command-agent/command-agent.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/command-agent/issues"
+    "url": "https://github.com/command-agent/command-agent/issues"
   },
-  "homepage": "https://github.com/yourusername/command-agent#readme",
+  "homepage": "https://github.com/command-agent/command-agent#readme",
   "engines": {
     "node": ">=16.0.0"
   }

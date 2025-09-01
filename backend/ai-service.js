@@ -1,10 +1,10 @@
-// This file contains the generateCommands function that uses the Perplexity Sonar API to generate Windows CMD commands based on a task description.
+
 
 import config from './config/config.js';
 import logger from './utils/logger.js';
 
 async function generateCommands(taskDescription) {
-  // Validate configuration
+
   try {
     config.validate();
   } catch (error) {

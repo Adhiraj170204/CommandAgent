@@ -1,4 +1,4 @@
-// Enhanced logging utility
+
 import fs from 'fs';
 import path from 'path';
 
@@ -23,13 +23,13 @@ class Logger {
             data
         };
 
-        // Console output with colors
+
         const colors = {
-            INFO: '\x1b[36m',    // Cyan
-            SUCCESS: '\x1b[32m', // Green
-            WARNING: '\x1b[33m', // Yellow
-            ERROR: '\x1b[31m',   // Red
-            RESET: '\x1b[0m'     // Reset
+            INFO: '\x1b[36m',
+            SUCCESS: '\x1b[32m',
+            WARNING: '\x1b[33m',
+            ERROR: '\x1b[31m',
+            RESET: '\x1b[0m'
         };
 
         console.log(`${colors[level] || ''}[${level}] ${timestamp}: ${message}${colors.RESET}`);
@@ -38,7 +38,7 @@ class Logger {
             console.log(JSON.stringify(data, null, 2));
         }
 
-        // File logging
+
         const logFile = path.join(this.logDir, `agent-${new Date().toISOString().split('T')[0]}.log`);
         fs.appendFileSync(logFile, JSON.stringify(logEntry) + '\n');
     }

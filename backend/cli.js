@@ -1,9 +1,8 @@
 #!/usr/bin/env node
-// CLI interface for the command agent
 
 import { program } from 'commander';
 import generateCommands from './ai-service.js';
-import config from './config/config.js';
+
 import logger from './utils/logger.js';
 import { validateTaskDescription } from './utils/validation.js';
 import fs from 'fs';
@@ -31,7 +30,7 @@ program
         process.exit(1);
       }
 
-      // Parse commands
+
       const match = commands.match(/\[\s*{[\s\S]*}\s*\]/);
       if (!match) {
         logger.error('No valid JSON array found in response');
@@ -75,7 +74,7 @@ program
   .description('Run test suite')
   .action(async () => {
     const { default: testRunner } = await import('./tests/agent.test.js');
-    // Test runner is already executed in the import
+
   });
 
 program.parse();
