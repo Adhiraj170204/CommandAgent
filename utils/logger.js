@@ -6,6 +6,7 @@ class Logger {
     constructor() {
         this.logDir = 'logs';
         this.ensureLogDir();
+        this.silent = process.env.SILENT_CONSOLE === 'true';
     }
 
     ensureLogDir() {
@@ -32,10 +33,11 @@ class Logger {
             RESET: '\x1b[0m'
         };
 
-        console.log(`${colors[level] || ''}[${level}] ${timestamp}: ${message}${colors.RESET}`);
-        
-        if (data) {
-            console.log(JSON.stringify(data, null, 2));
+        if (!this.silent) {
+            console.log(`${colors[level] || ''}[${level}] ${timestamp}: ${message}${colors.RESET}`);
+            if (data) {
+                console.log(JSON.stringify(data, null, 2));
+            }
         }
 
 

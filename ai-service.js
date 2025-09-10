@@ -3,14 +3,7 @@
 import config from './config/config.js';
 import logger from './utils/logger.js';
 
-async function generateCommands(taskDescription) {
-
-  try {
-    config.validate();
-  } catch (error) {
-    logger.error('Configuration validation failed', { error: error.message });
-    throw error;
-  }
+async function generateCommands(taskDescription, conversation = []) {
 
   logger.info('Generating commands for task', { task: taskDescription });
   const userPrompt = `
@@ -72,10 +65,29 @@ Example output format:
 Respond ONLY with the JSON array for the task: ${taskDescription}.
 `;
 
+  if (process.env.MOCK_AI === 'true') {
+    const mockContent = `[
+      { "command": "mkdir demo", "description": "Create a new folder named demo." },
+      { "command": "node -e \"require('fs').writeFileSync('index.html','<!DOCTYPE html>\\n<html>\\n<head><title>Demo</title></head>\\n<body><h1>Hello</h1></body>\\n</html>')\"", "description": "Create a simple HTML file." }
+    ]`;
+    return {
+      content: mockContent,
+      userMessage: { role: 'user', content: userPrompt },
+      assistantMessage: { role: 'assistant', content: mockContent }
+    };
+  }
+
+  try {
+    config.validate();
+  } catch (error) {
+    logger.error('Configuration validation failed', { error: error.message });
+    throw error;
+  }
+
   try {
     const requestBody = {
       model: config.api.model,
-      messages: [{ role: 'user', content: userPrompt }],
+      messages: [...conversation, { role: 'user', content: userPrompt }],
       max_tokens: config.api.maxTokens,
       temperature: config.api.temperature
     };
@@ -102,7 +114,7 @@ Respond ONLY with the JSON array for the task: ${taskDescription}.
       });
 
       if (response.status === 401) {
-        throw new Error('Invalid Perplexity API key - check your .env file');
+        throw new Error('Invalid OpenAI API key - check OPENAI_API_KEY in .env');
       } else if (response.status === 429) {
         throw new Error('API rate limit exceeded - please wait before trying again');
       } else if (response.status === 400) {
@@ -118,12 +130,17 @@ Respond ONLY with the JSON array for the task: ${taskDescription}.
       logger.info('API Response', { data });
     }
 
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+    if (!data.choices || !data.choices[0]) {
       throw new Error('Invalid API response structure');
     }
 
     logger.success('Commands generated successfully');
-    return data.choices[0].message.content;
+    const content = data.choices[0].message?.content || data.choices[0].text;
+    return {
+      content,
+      userMessage: { role: 'user', content: userPrompt },
+      assistantMessage: { role: 'assistant', content }
+    };
   } catch (error) {
     logger.error('Error generating commands', { error: error.message, stack: error.stack });
     return null;

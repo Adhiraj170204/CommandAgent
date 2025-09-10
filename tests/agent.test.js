@@ -95,9 +95,11 @@ runner.test('validateCommand - missing description', () => {
 
 
 runner.test('generateCommands - simple task', async () => {
-    const commands = await generateCommands('Create a simple HTML file');
-    runner.assert(commands !== null, 'Should generate commands');
-    runner.assert(typeof commands === 'string', 'Should return string');
+    process.env.MOCK_AI = 'true';
+    const result = await generateCommands('Create a simple HTML file');
+    runner.assert(result !== null, 'Should generate commands');
+    runner.assert(typeof result.content === 'string', 'content should be a string');
+    runner.assert(result.content.trim().startsWith('['), 'content should look like JSON array');
 });
 
 

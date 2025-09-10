@@ -5,11 +5,11 @@ dotenv.config();
 const config = {
 
     api: {
-        key: process.env.API_SecretKey,
-        model: process.env.API_MODEL || 'sonar',
+        key: process.env.OPENAI_API_KEY || process.env.API_SecretKey,
+        model: process.env.API_MODEL || 'gpt-4o-mini',
         maxTokens: parseInt(process.env.API_MAX_TOKENS) || 512,
         temperature: parseFloat(process.env.API_TEMPERATURE) || 0.6,
-        endpoint: process.env.API_ENDPOINT || 'https://api.perplexity.ai/chat/completions'
+        endpoint: process.env.API_ENDPOINT || 'https://api.openai.com/v1/chat/completions'
     },
 
 
@@ -31,7 +31,7 @@ const config = {
 
     validate() {
         if (!this.api.key) {
-            throw new Error('API_SecretKey is required in .env file');
+            throw new Error('Missing OpenAI API key. Set OPENAI_API_KEY in .env');
         }
         return true;
     }

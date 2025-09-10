@@ -11,9 +11,12 @@ Transform natural language descriptions into executable commands for project set
 
 ## ✨ Features
 
-- 🧠 **AI-Powered Command Generation** - Uses Perplexity Sonar API to convert natural language to executable commands
+- 🧠 **AI-Powered Command Generation** - Uses OpenAI Chat Completions to convert natural language to executable commands
 - 🛡️ **Safe Execution** - Interactive approval process with command validation and dangerous command detection
 - 📁 **Smart Directory Management** - Automatic directory tracking and context switching
+- 💬 **Continuous Chat in One Run** - After a task completes, continue with “Is there anything else?” in the same conversation
+- ⏳ **Minimal Console UI** - Spinner-based "working..." interface with hidden command logs
+- 🧾 **Terminal Context to AI** - Captures command outputs and adds summaries to the ongoing chat for better follow-ups
 - 🎯 **Multi-Language Support** - Supports Node.js, Python, Java, HTML/CSS/JS, Docker, and more
 - ⚡ **MERN Stack Specialist** - Optimized for full-stack JavaScript development
 - 🔧 **Flexible Interface** - Both interactive CLI and programmatic API
@@ -33,9 +36,10 @@ cd command-agent
 # Install dependencies
 npm install
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env and add your Perplexity API key
+# Create a .env file with your settings
+echo OPENAI_API_KEY=your_openai_api_key_here > .env
+echo API_MODEL=gpt-4o-mini >> .env
+echo SILENT_CONSOLE=true >> .env
 ```
 
 ### Basic Usage
@@ -137,9 +141,14 @@ What task would you like me to perform?
 
 ```bash
 # Required
-API_SecretKey=your_perplexity_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here
 
 # Optional
+API_MODEL=gpt-4o-mini
+API_ENDPOINT=https://api.openai.com/v1/chat/completions
+API_MAX_TOKENS=512
+API_TEMPERATURE=0.6
+SILENT_CONSOLE=true
 DEFAULT_TIMEOUT=30000
 REACT_APP_TIMEOUT=300000
 DEBUG=false
@@ -147,7 +156,7 @@ DEBUG=false
 
 ### API Configuration
 
-The agent uses Perplexity Sonar API. Get your API key from [Perplexity AI](https://www.perplexity.ai/).
+The agent uses the OpenAI Chat Completions API. Provide `OPENAI_API_KEY` in your `.env`. Default model is `gpt-4o-mini` and can be overridden with `API_MODEL`.
 
 ---
 
@@ -165,7 +174,6 @@ command-agent/
 │   └── validation.js      # Input validation
 ├── tests/
 │   └── agent.test.js      # Test suite
-├── .env.example           # Environment template
 └── README.md              # This file
 ```
 
@@ -192,6 +200,7 @@ npm run test:java
 - **Dangerous Command Detection** - Blocks potentially harmful commands
 - **Safe File Operations** - Uses Node.js fs module instead of shell commands
 - **Interactive Approval** - User must approve each command before execution
+- **Silent Console Option** - Set `SILENT_CONSOLE=true` to hide logs in console while writing to `logs/`
 
 ---
 
@@ -213,7 +222,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Perplexity AI](https://www.perplexity.ai/) for the powerful Sonar API
+- [OpenAI](https://platform.openai.com/) for the Chat Completions API
 - [Inquirer.js](https://github.com/SBoudrias/Inquirer.js) for interactive CLI
 - [Commander.js](https://github.com/tj/commander.js) for command-line interface
 
